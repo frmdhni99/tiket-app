@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   TouchableOpacity,
@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {useNavigation} from '@react-navigation/native';
+import axios from 'axios';
 
 import Logo from '../assets/ticket.svg';
 import Card from '../components/Card';
@@ -28,60 +29,24 @@ type MusicDataProps = {
   description: string;
 };
 
-const musicData: MusicDataProps[] = [
-  {
-    id: 1,
-    image:
-      'https://c4.wallpaperflare.com/wallpaper/708/554/392/alternative-britpop-coldplay-rock-wallpaper-preview.jpg',
-    title: 'Coldplay - Music of The Year',
-    type: 'Festival Musik',
-    place: 'Gelora Bung Karno, Jakarta',
-    date: '15 Nov 2023',
-    price: 1100,
-    description:
-      "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum. Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
-  },
-  {
-    id: 2,
-    image:
-      'https://c4.wallpaperflare.com/wallpaper/316/773/109/album-covers-muse-music-wallpaper-preview.jpg',
-    title: 'Muse - Will of the Prototype',
-    type: 'Festival Musik',
-    place: 'Gelora Bung Karno, Jakarta',
-    date: '7 Jun 2023',
-    price: 300,
-    description:
-      "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum. Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
-  },
-  {
-    id: 3,
-    image:
-      'https://assets.ayobandung.com/crop/0x0:0x0/750x500/webp/photo/2023/06/04/Konser-NOAH-di-Palembang-17-Juni-2023-2135331774.jpg',
-    title: 'Noah - Bebaskan Energimu',
-    type: 'Festival Musik',
-    place: 'Gelora Satria, Purwokerto',
-    date: '17 June 2023',
-    price: 250,
-    description:
-      "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum. Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
-  },
-  {
-    id: 4,
-    image:
-      'https://d1629ugb7moz2f.cloudfront.net/e/23394/h9mUaq4ZDhXtHM3QGJXaEhxKKg26DVIl4iIlvD8a.png',
-    title: 'Dzawin Nur - Langit Kelabu',
-    type: 'Standup Comedy',
-    place: 'Gedung Kesenian Soetedja, Purwokerto',
-    date: '24 June 2023',
-    price: 250,
-
-    description:
-      "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum. Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
-  },
-];
+// const musicData: MusicDataProps[] = [
 
 const Home = () => {
   const navigation = useNavigation();
+
+  const [musicData, setMusicData] = useState([]);
+
+  const fetchMusicData = async () => {
+    try {
+      const response = await axios.get('http://192.168.18.9:3000/musicdata');
+      if (response.data.length > 0) {
+        return setMusicData(response.data);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  console.log(musicData);
 
   useEffect(() => {
     const backAction = () => {
@@ -100,6 +65,8 @@ const Home = () => {
       'hardwareBackPress',
       backAction,
     );
+
+    fetchMusicData();
 
     return () => backHandler.remove();
   }, []);
@@ -145,10 +112,25 @@ const Home = () => {
         </View>
         <View style={{marginTop: 16}}>
           <Text style={style.eventTitle}>Event Di Dekatmu</Text>
-          <WideCard data={musicData[0]} />
-          <WideCard data={musicData[1]} />
+          <ScrollView>
+            {musicData.map(item => {
+              return (
+                <WideCard
+                  data={item}
+                  onPress={() =>
+                    navigation.navigate('BookTiket', {
+                      paramKey: item,
+                    })
+                  }
+                  key={item.id}
+                />
+              );
+            })}
+          </ScrollView>
+          {/* <WideCard data={musicData[0]} /> */}
+          {/* <WideCard data={musicData[1]} />
           <WideCard data={musicData[2]} />
-          <WideCard data={musicData[3]} />
+          <WideCard data={musicData[3]} /> */}
         </View>
       </View>
     </ScrollView>
